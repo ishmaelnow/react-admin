@@ -13,6 +13,56 @@ const RideManagement = () => {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState("");
 
+  const loadAvailableDrivers = useCallback(async () => {
+    try {
+      console.log('Loading available drivers...');
+      
+      const { data: driverData, error: driverError } = await supabase
+        .from('driver_profiles')
+        .select('*')
+        .eq('is_active', true)
+        .eq('is_available', true);
+
+      if (driverError) {
+        console.error('Available drivers error:', driverError);
+        throw driverError;
+      }
+
+      console.log('Available drivers loaded:', driverData?.length || 0);
+
+      // Get profiles for drivers
+      if (driverData && driverData.length > 0) {
+        const userIds = driverData.map(d => d.user_id).filter(Boolean);
+        
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, full_name, email')
+          .in('id', userIds);
+
+        if (profileError) {
+          console.warn('Profile fetch error (non-blocking):', profileError);
+        }
+
+        const driversWithProfiles = driverData.map(driver => ({
+          ...driver,
+          profiles: profileData?.find(p => p.id === driver.user_id) || null
+        }));
+
+        setAvailableDrivers(driversWithProfiles);
+      } else {
+        setAvailableDrivers([]);
+      }
+    } catch (error) {
+      console.error("Error loading available drivers:", error);
+      console.error("Error details:", {
+        message: error.message,
+        code: error.code,
+        details: error.details
+      });
+      setAvailableDrivers([]);
+    }
+  }, []);
+
   const loadRides = useCallback(async () => {
     try {
       setLoading(true);
@@ -83,57 +133,6 @@ const RideManagement = () => {
       loadAvailableDrivers();
     }
   }, [user, loadRides, loadAvailableDrivers]);
-
-
-  const loadAvailableDrivers = useCallback(async () => {
-    try {
-      console.log('Loading available drivers...');
-      
-      const { data: driverData, error: driverError } = await supabase
-        .from('driver_profiles')
-        .select('*')
-        .eq('is_active', true)
-        .eq('is_available', true);
-
-      if (driverError) {
-        console.error('Available drivers error:', driverError);
-        throw driverError;
-      }
-
-      console.log('Available drivers loaded:', driverData?.length || 0);
-
-      // Get profiles for drivers
-      if (driverData && driverData.length > 0) {
-        const userIds = driverData.map(d => d.user_id).filter(Boolean);
-        
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
-          .in('id', userIds);
-
-        if (profileError) {
-          console.warn('Profile fetch error (non-blocking):', profileError);
-        }
-
-        const driversWithProfiles = driverData.map(driver => ({
-          ...driver,
-          profiles: profileData?.find(p => p.id === driver.user_id) || null
-        }));
-
-        setAvailableDrivers(driversWithProfiles);
-      } else {
-        setAvailableDrivers([]);
-      }
-    } catch (error) {
-      console.error("Error loading available drivers:", error);
-      console.error("Error details:", {
-        message: error.message,
-        code: error.code,
-        details: error.details
-      });
-      setAvailableDrivers([]);
-    }
-  }, []);
 
   const handleAssignRide = async () => {
     if (!selectedRide || !selectedDriverId) {

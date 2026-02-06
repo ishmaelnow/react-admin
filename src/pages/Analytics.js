@@ -62,16 +62,17 @@ const Analytics = () => {
         .eq('is_active', true)
         .eq('is_available', true);
 
-      setStats({
+      const newStats = {
         totalDrivers: driversResult.count || 0,
         totalRides: ridesResult.count || 0,
         totalUsers: usersResult.count || 0,
         totalRevenue: totalRevenue,
         activeDrivers: activeDrivers?.length || 0,
         ridesByStatus: statusCounts
-      });
+      };
 
-      console.log('Analytics loaded:', stats);
+      setStats(newStats);
+      console.log('Analytics loaded:', newStats);
     } catch (error) {
       console.error("Error loading analytics:", error);
       alert(`Failed to load analytics: ${error.message || 'Unknown error'}`);
