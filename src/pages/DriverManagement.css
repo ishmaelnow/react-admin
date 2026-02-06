@@ -1,0 +1,192 @@
+.admin-driver-management {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.admin-page-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.btn-refresh {
+  padding: 8px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.btn-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-loading,
+.admin-empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.admin-access-denied {
+  text-align: center;
+  padding: 3rem;
+  color: #ef4444;
+}
+
+.drivers-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.driver-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.driver-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.driver-card-header {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.driver-card-header h4 {
+  margin: 0 0 0.25rem 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.driver-email {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.driver-card-body {
+  margin-bottom: 1rem;
+}
+
+.vehicle-info-section {
+  margin-bottom: 1rem;
+}
+
+.vehicle-info {
+  font-weight: 600;
+  color: #007bff;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.vehicle-details {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+.driver-status-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.driver-status {
+  margin: 0;
+  font-weight: 500;
+}
+
+.status-available {
+  color: #10b981;
+}
+
+.status-busy {
+  color: #f59e0b;
+}
+
+.status-pending {
+  color: #6b7280;
+}
+
+.driver-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.driver-actions button {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-approve {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-approve:hover {
+  background-color: #059669;
+}
+
+.btn-reject,
+.btn-remove {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-reject:hover,
+.btn-remove:hover {
+  background-color: #dc2626;
+}
+
+.btn-toggle {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-toggle:hover {
+  background-color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .drivers-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
