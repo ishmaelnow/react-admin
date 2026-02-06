@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import "./Analytics.css";
@@ -9,13 +9,7 @@ const Analytics = () => {
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState('7d'); // 7d, 30d, all
 
-  useEffect(() => {
-    if (user && user.role === 'admin') {
-      loadAnalytics();
-    }
-  }, [user, dateRange]);
-
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       console.log('Loading analytics...');
@@ -84,7 +78,14 @@ const Analytics = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    if (user && user.role === 'admin') {
+      loadAnalytics();
+    }
+  }, [user, loadAnalytics]);
+
 
   const formatCurrency = (amount) => {
     if (!amount) return "$0.00";

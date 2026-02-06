@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import "./RideManagement.css";
@@ -13,14 +13,7 @@ const RideManagement = () => {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState("");
 
-  useEffect(() => {
-    if (user && user.role === 'admin') {
-      loadRides();
-      loadAvailableDrivers();
-    }
-  }, [user, filterStatus]);
-
-  const loadRides = async () => {
+  const loadRides = useCallback(async () => {
     try {
       setLoading(true);
       console.log('Loading rides with status:', filterStatus);
@@ -82,9 +75,17 @@ const RideManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus]);
 
-  const loadAvailableDrivers = async () => {
+  useEffect(() => {
+    if (user && user.role === 'admin') {
+      loadRides();
+      loadAvailableDrivers();
+    }
+  }, [user, loadRides, loadAvailableDrivers]);
+
+
+  const loadAvailableDrivers = useCallback(async () => {
     try {
       console.log('Loading available drivers...');
       
@@ -132,7 +133,7 @@ const RideManagement = () => {
       });
       setAvailableDrivers([]);
     }
-  };
+  }, []);
 
   const handleAssignRide = async () => {
     if (!selectedRide || !selectedDriverId) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import "./UserManagement.css";
@@ -10,13 +10,7 @@ const UserManagement = () => {
   const [filterRole, setFilterRole] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    if (user && user.role === 'admin') {
-      loadUsers();
-    }
-  }, [user, filterRole]);
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true);
       console.log('Loading users...');
@@ -56,7 +50,23 @@ const UserManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterRole, searchTerm]);
+
+  useEffect(() => {
+    if (user && user.role === 'admin') {
+      loadUsers();
+    }
+  }, [user, loadUsers]);
+
+  useEffect(() => {
+    if (user && user.role === 'admin' && searchTerm) {
+      const timeoutId = setTimeout(() => {
+        loadUsers();
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [searchTerm, user, loadUsers]);
+
 
   const handleUpdateUserRole = async (userId, newRole) => {
     if (!window.confirm(`Change user role to ${newRole}?`)) return;
@@ -102,11 +112,7 @@ const UserManagement = () => {
             type="text"
             placeholder="Search users..."
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              // Debounce search
-              setTimeout(() => loadUsers(), 500);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
           />
           <select 
